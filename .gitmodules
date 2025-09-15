@@ -1,0 +1,12 @@
+[submodule "PremakeBuilder/vendor/GLFW"]
+	path = PremakeBuilder/vendor/GLFW
+	url = https://github.com/flapicat/GLFW.git
+[submodule "PremakeBuilder/vendor/glad"]
+	path = PremakeBuilder/vendor/glad
+	url = https://github.com/flapicat/glad.git
+[submodule "PremakeBuilder/vendor/ImGui"]
+	path = PremakeBuilder/vendor/ImGui
+	url = https://github.com/flapicat/ImGui.git
+[submodule "PremakeBuilder/vendor/glm"]
+	path = PremakeBuilder/vendor/glm
+	url = https://github.com/flapicat/glm.git
