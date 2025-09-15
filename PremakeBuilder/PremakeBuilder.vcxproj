@@ -97,7 +97,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClInclude Include="src\core\App.h" />
+    <ClInclude Include="src\core\Base.h" />
+    <ClInclude Include="src\core\GeneratePremakeFile.h" />
+    <ClInclude Include="src\core\Log.h" />
+    <ClInclude Include="src\imgui\ImGuiAPI.h" />
+    <ClInclude Include="src\core\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\App.cpp" />
+    <ClCompile Include="src\core\Log.cpp" />
+    <ClCompile Include="src\core\main.cpp" />
+    <ClCompile Include="src\imgui\ImGuiBuild.cpp" />
+    <ClCompile Include="src\imgui\ImGuiAPI.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
