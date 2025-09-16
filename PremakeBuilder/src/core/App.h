@@ -8,6 +8,8 @@
 #include "imgui/ImGuiAPI.h"
 #include "Window.h"
 
+#include "GeneratePremakeFile.h"
+
 class App
 {
 public:
@@ -29,6 +31,6 @@ private:
 	static App* s_Instance;
 	Ref<Window> m_window;
 	ImGuiAPI* m_ImGuiAPI;
-
+	File m_file;
 };
 

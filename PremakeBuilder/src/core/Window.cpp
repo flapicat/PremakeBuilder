@@ -33,6 +33,7 @@ void Window::CreateNativeWindow()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 
     m_window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str() , nullptr, nullptr);
@@ -41,6 +42,12 @@ void Window::CreateNativeWindow()
         glfwTerminate();
         exit(-1);
     }
+
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+    int xpos = (mode->width - m_Data.Width) / 2;
+    int ypos = (mode->height - m_Data.Height) / 2;
+    glfwSetWindowPos(m_window, xpos, ypos);
 
     glfwMakeContextCurrent(m_window);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);

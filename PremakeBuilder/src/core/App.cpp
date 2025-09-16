@@ -1,5 +1,6 @@
 #include "App.h"
 #include <imgui.h>
+#include <imgui_internal.h>
 
 App* App::s_Instance = nullptr;
 
@@ -25,6 +26,8 @@ void App::Start()
     m_window = CreateRef<Window>(data);
 
     m_ImGuiAPI->OnAttach();
+
+	//m_file.GenerateFile();
 }
 
 void App::Update()
@@ -53,62 +56,63 @@ void App::ShutDown()
 
 void App::OnImGuiRender()
 {
-	//VAR AND FLAGS
-	static bool* p_open;
-	static bool opt_fullscreen = true;
-	static bool opt_padding = false;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    // Dockspace setup
+    static bool* p_open = nullptr;
+    static bool opt_fullscreen = true;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-	if (opt_fullscreen)
-	{
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->WorkPos);
-		ImGui::SetNextWindowSize(viewport->WorkSize);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	}
-	else
-	{
-		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-	}
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-		window_flags |= ImGuiWindowFlags_NoBackground;
+    if (opt_fullscreen)
+    {
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-	//DOCKSPACE START
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace", p_open, window_flags);
-	ImGui::PopStyleVar();
+        window_flags |= ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus;
+    }
 
-	if (opt_fullscreen)
-		ImGui::PopStyleVar(2);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::Begin("DockSpace", p_open, window_flags);
+    ImGui::PopStyleVar(); // Window padding
+    if (opt_fullscreen)
+        ImGui::PopStyleVar(2); // Rounding + border size
 
-	// Submit the DockSpace
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    // Create DockSpace
+    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0, 0), dockspace_flags);
 
-	if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit")) App::Get().Close();
-			ImGui::EndMenu();
-		}
-
-		ImGui::EndMenuBar();
-	}
-
-	ImGui::End();
+    // Menu bar
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Save"));
+            if (ImGui::MenuItem("Load"));
+            if (ImGui::MenuItem("Save Us"));
+            if (ImGui::MenuItem("Export"));
+            if (ImGui::MenuItem("Exit")) App::Get().Close();
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Project"))
+        {
+            if (ImGui::MenuItem("New Workspace")) m_file.AddWorkspace();
+            if (ImGui::MenuItem("New Project")) m_file.AddProject();
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+    m_file.RenderUI(dockspace_id);
+    ImGui::End();
 	//DOCKSPACE END
-
-	ImGui::Begin("Test window");
-	ImGui::Text("ASDASDASD");
-	ImGui::End();
 }
 
 void App::Close()
