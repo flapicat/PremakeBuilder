@@ -59,9 +59,61 @@ void File::GenerateFile()
 		exit(-1);
 	}
 
-	//Workspace
 
-	//Project
+	for (int i = 0; i < m_workspaces.size(); i++)
+	{
+		auto& currentWorkspace = m_workspaces[i];
+		premakeFile << "workspace " << "\"" << currentWorkspace.workspaceName << "\"\n";
+		premakeFile << "\tarchitecture " << "\"" << currentWorkspace.architecture[currentWorkspace.current_Architecture_item] << "\"\n";
+		if (!currentWorkspace.startProject.empty())
+		{
+			premakeFile << "\tstartproject" << "\"" << currentWorkspace.startProject << "\"\n";
+		}
+		premakeFile << "\n";
+		premakeFile << "\tconfigurations\n\t{\n";
+		for (size_t i = 0; i < currentWorkspace.configurations.size(); i++)
+		{
+			premakeFile << "\t\t\"" << currentWorkspace.configurations[i] << "\"\n";
+		}
+		premakeFile << "\t}\n";
+		premakeFile << "\n";
+		premakeFile << "\n";
+		if (currentWorkspace.DependenciesFolder)
+		{
+			premakeFile << "group \"Dependencies\"\n";
+			premakeFile << "group \"\"";
+		}
+		premakeFile << "\n\n";
+
+		for (auto& project : m_projects)
+		{
+			if (project.OwnerWorkspace->workspaceName == currentWorkspace.workspaceName)
+			{
+				premakeFile << "project \"" << project.projectName << "\"\n";
+				premakeFile << "\tlocation \"" << project.location << "\"\n";
+				premakeFile << "\tkind \"" << project.kind[project.current_kind] << "\"\n";
+				premakeFile << "\tlanguage \"" << project.language[project.current_language] << "\"\n";
+				if (project.current_language == 0)
+				{
+					premakeFile << "\tcdialect \"" << project.cdialect[project.current_cdialect] << "\"\n";
+				}
+				if (project.current_language == 1)
+				{
+					premakeFile << "\tcppdialect \"" << project.cppdialect[project.current_cppdialect] << "\"\n";
+				}
+				premakeFile << "\tstaticruntime \"" << project.staticRuntime[project.current_staticRuntime] << "\"\n";
+				if (project.buildOptions.size() > 0)
+				{
+					premakeFile << "\tbuildoptions {";
+					for (size_t i = 0; i < project.buildOptions.size(); i++)
+					{
+						premakeFile << project.buildOptions[i] << ",";
+					}
+					premakeFile << "}\n";
+				}
+			}
+		}
+	}
 
 	premakeFile.close();
 	LOG_INFO("File generated Successfully");
@@ -141,14 +193,14 @@ void File::RenderUI(ImGuiID dockspaceID)
 				std::string ManagepopupID = "Manage Configurations###popup" + std::to_string(i);
 				if (ImGui::BeginPopupModal(ManagepopupID.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 				{
-					for (size_t c = 0; c < currentWorkspace.configuration.size(); c++)
+					for (size_t c = 0; c < currentWorkspace.configurations.size(); c++)
 					{
 						ImGui::PushID(static_cast<int>(c));
-						ImGui::Text("%s", currentWorkspace.configuration[c].c_str());
+						ImGui::Text("%s", currentWorkspace.configurations[c].c_str());
 						ImGui::SameLine();
 						if (ImGui::Button("Delete"))
 						{
-							currentWorkspace.configuration.erase(currentWorkspace.configuration.begin() + c);
+							currentWorkspace.configurations.erase(currentWorkspace.configurations.begin() + c);
 							ImGui::PopID();
 							break;
 						}
@@ -163,7 +215,7 @@ void File::RenderUI(ImGuiID dockspaceID)
 					{
 						if (strlen(newConfig) > 0)
 						{
-							currentWorkspace.configuration.push_back(std::string(newConfig));
+							currentWorkspace.configurations.push_back(std::string(newConfig));
 							newConfig[0] = '\0';
 						}
 					}

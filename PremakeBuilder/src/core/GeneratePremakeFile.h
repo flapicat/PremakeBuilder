@@ -12,7 +12,7 @@ struct WorkspaceProps
 	std::vector<std::string> architecture = { "x32", "x64" };
 	int current_Architecture_item = 0;
 	std::string startProject = "";
-	std::vector<std::string> configuration = { "Debug", "Release" };
+	std::vector<std::string> configurations = { "Debug", "Release" };
 	std::unordered_map<std::string, std::string> Dependencies;
 	std::vector<std::unordered_map<std::string, std::string>> IncludeDir = {};
 	bool DependenciesFolder = true;

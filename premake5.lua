@@ -1,5 +1,6 @@
 workspace "PremakeBuilder"
 	architecture "x64"
+	startproject "PremakeBuilder"
 
 	configurations
 	{

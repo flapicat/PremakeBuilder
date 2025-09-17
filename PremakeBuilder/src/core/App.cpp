@@ -26,8 +26,6 @@ void App::Start()
     m_window = CreateRef<Window>(data);
 
     m_ImGuiAPI->OnAttach();
-
-	//m_file.GenerateFile();
 }
 
 void App::Update()
@@ -98,7 +96,7 @@ void App::OnImGuiRender()
             if (ImGui::MenuItem("Save"));
             if (ImGui::MenuItem("Load"));
             if (ImGui::MenuItem("Save Us"));
-            if (ImGui::MenuItem("Export"));
+            if (ImGui::MenuItem("Export")) m_file.GenerateFile();
             if (ImGui::MenuItem("Exit")) App::Get().Close();
             ImGui::EndMenu();
         }
